@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://cxlfmvplssqp8"]
+
+[ext_resource type="Script" path="res://addons/godot-xr-physics-interactions/functions/grab_function.gd" id="1_bfxh6"]
+[ext_resource type="Shader" path="res://addons/godot-xr-physics-interactions/temporary/testHolo.gdshader" id="2_o754m"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_f1w41"]
+radius = 0.072024
+
+[sub_resource type="BoxMesh" id="BoxMesh_2l1hh"]
+size = Vector3(0.01, 0.01, 0.01)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_28sid"]
+render_priority = 0
+shader = ExtResource("2_o754m")
+
+[node name="GrabFunction" type="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 0.999991, 0.00413642, 0, -0.00413642, 0.999991, 0.0143744, -0.0539311, 0.113181)
+collision_layer = 131072
+collision_mask = 7
+script = ExtResource("1_bfxh6")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 131072
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_f1w41")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00122476, 0, 0)
+mesh = SubResource("BoxMesh_2l1hh")
+surface_material_override/0 = SubResource("ShaderMaterial_28sid")
+
+[node name="Generic6DOFJoint3D" type="Generic6DOFJoint3D" parent="."]
+node_a = NodePath("..")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]
