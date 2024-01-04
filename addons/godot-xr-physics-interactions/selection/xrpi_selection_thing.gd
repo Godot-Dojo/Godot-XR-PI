@@ -1,7 +1,7 @@
 extends Node3D
 class_name SelectionThing
 
-var Highlighted : Node3D
+var highlighted : Node3D
 
 @export var default_color : Color = Color(1, 1, 1)
 
@@ -29,17 +29,17 @@ func _update_highlighted(new_highlighted : Node3D):
 	var tween = get_tree().create_tween()
 	tween.tween_property($SelectionPointer, "global_position", new_highlighted.global_position, 0.6).set_trans(Tween.TRANS_BACK)
 	tween.finished.connect($SelectionPointer.tween_finished)
-	Highlighted = new_highlighted
+	highlighted = new_highlighted
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if !$ShapeCast3D.is_colliding():
 		$SelectionPointer.visible = 0
-		Highlighted = null
+		highlighted = null
 		$SelectionPointer.global_position = global_position
 		return
 		
-	if Highlighted != $ShapeCast3D.get_collider(0):
+	if highlighted != $ShapeCast3D.get_collider(0):
 		_update_highlighted($ShapeCast3D.get_collider(0))
 

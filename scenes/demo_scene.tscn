@@ -1,0 +1,68 @@
+[gd_scene load_steps=10 format=3 uid="uid://bamgtl2gdmd0b"]
+
+[ext_resource type="PackedScene" uid="uid://clc5dre31iskm" path="res://addons/godot-xr-tools/xr/start_xr.tscn" id="1_3kk1j"]
+[ext_resource type="PackedScene" uid="uid://cxlfmvplssqp8" path="res://addons/godot-xr-physics-interactions/functions/grab_function.tscn" id="2_sv6r2"]
+[ext_resource type="Script" path="res://addons/godot-xr-physics-interactions/functions/xrpi_remote_pull.gd" id="3_j83l4"]
+[ext_resource type="PackedScene" uid="uid://diyu06cw06syv" path="res://addons/godot-xr-tools/player/player_body.tscn" id="3_rlvmi"]
+[ext_resource type="PackedScene" uid="uid://46e5eq6tpp3t" path="res://addons/godot-xr-physics-interactions/selection/xrpi_selection_thing.tscn" id="4_oj44x"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0alcb"]
+
+[sub_resource type="Sky" id="Sky_76avk"]
+sky_material = SubResource("ProceduralSkyMaterial_0alcb")
+
+[sub_resource type="Environment" id="Environment_rb0t7"]
+background_mode = 2
+sky = SubResource("Sky_76avk")
+tonemap_mode = 2
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_vfq8t"]
+size = Vector2(16, 20)
+
+[node name="Demo Scene" type="Node3D"]
+
+[node name="StartXR" parent="." instance=ExtResource("1_3kk1j")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_rb0t7")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_vfq8t")
+
+[node name="XROrigin3D" type="XROrigin3D" parent="."]
+
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
+
+[node name="LeftHand" type="XRController3D" parent="XROrigin3D"]
+tracker = &"left_hand"
+
+[node name="GrabFunction" parent="XROrigin3D/LeftHand" instance=ExtResource("2_sv6r2")]
+
+[node name="RemotePull" type="Node3D" parent="XROrigin3D/LeftHand" node_paths=PackedStringArray("selection_thing", "grab_function")]
+visible = false
+script = ExtResource("3_j83l4")
+selection_thing = NodePath("../SelectionThing")
+grab_function = NodePath("../GrabFunction")
+input_name = &"primary_click"
+
+[node name="SelectionThing" parent="XROrigin3D/LeftHand" instance=ExtResource("4_oj44x")]
+
+[node name="RightHand" type="XRController3D" parent="XROrigin3D"]
+tracker = &"right_hand"
+
+[node name="GrabFunction" parent="XROrigin3D/RightHand" instance=ExtResource("2_sv6r2")]
+
+[node name="RemotePull" type="Node3D" parent="XROrigin3D/RightHand" node_paths=PackedStringArray("selection_thing", "grab_function")]
+visible = false
+script = ExtResource("3_j83l4")
+selection_thing = NodePath("../SelectionThing")
+grab_function = NodePath("../GrabFunction")
+input_name = &"primary_click"
+
+[node name="SelectionThing" parent="XROrigin3D/RightHand" instance=ExtResource("4_oj44x")]
+
+[node name="PlayerBody" parent="XROrigin3D" instance=ExtResource("3_rlvmi")]

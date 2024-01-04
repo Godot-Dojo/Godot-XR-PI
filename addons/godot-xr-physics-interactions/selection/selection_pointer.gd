@@ -7,5 +7,5 @@ func tween_finished():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if $"..".Highlighted && !move_processing:
-		global_position = $"..".Highlighted.global_position
+	if $"..".highlighted && !move_processing:
+		global_position = $"..".highlighted.global_position

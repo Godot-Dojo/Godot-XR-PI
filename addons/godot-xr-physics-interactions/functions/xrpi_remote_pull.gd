@@ -1,6 +1,6 @@
 extends Node3D
 
-@export var SelectionThingNode : SelectionThing
+@export var selection_thing : SelectionThing
 
 var detect_gesture = false
 var animating = false
@@ -17,7 +17,7 @@ var pull_curve : Curve3D
 
 signal grab_state_changed(new_state : bool)
 
-@export var grab_function : GrabFunction
+@export var grab_function : XRPIGrabFunction
 
 @export var input_name : StringName = "grip_click"
 
@@ -25,19 +25,19 @@ signal grab_state_changed(new_state : bool)
 
 func _update_grab_state(new_state : bool):
 	if new_state:
-		if SelectionThingNode.Highlighted:
-			target = SelectionThingNode.Highlighted
+		if selection_thing.highlighted:
+			target = selection_thing.highlighted
 			detect_gesture = true
-			SelectionThingNode.update_color(SelectionThingNode.grabbing_color)
+			selection_thing.update_color(selection_thing.grabbing_color)
 			target_x_rotation = rad_to_deg(get_parent().rotation.x) + 65
 		else:
 			target = null
 			detect_gesture = false
-			SelectionThingNode.update_color(SelectionThingNode.default_color)
+			selection_thing.update_color(selection_thing.default_color)
 		
 	else:
 		target = null
-		SelectionThingNode.update_color(SelectionThingNode.default_color)
+		selection_thing.update_color(selection_thing.default_color)
 		detect_gesture = false
 		
 func check_for_grab(input):
@@ -59,13 +59,12 @@ func pull_node(target : RigidBody3D):
 	pull_target.progress_ratio = 0
 	
 	var animate_time = 0.45
-	var distance = point.x + point.y + point.z
+	var distance = abs(point.x) + abs(point.y) + abs(point.z)
 	animate_time = animate_time * distance
 	var tween = get_tree().create_tween()
 	
 	tween.tween_property(pull_target, "progress_ratio", 1, 0.45).set_trans(Tween.TRANS_QUAD)
-	timer_target = target
-	get_tree().create_timer(0.39).timeout.connect(unfreeze_target)
+	tween.parallel().tween_property(pull_target, "freeze", false, 0.45)
 	await tween.finished
 	pull_transform.remote_path = ""
 	
@@ -82,9 +81,6 @@ func _ready() -> void:
 	add_child(pull_path)
 	pull_path.top_level = true
 
-func unfreeze_target():
-	timer_target.freeze = false
-	timer_target = null
 
 func _physics_process(delta: float) -> void:
 	if detect_gesture && grab_function.picked_up_object == null:
