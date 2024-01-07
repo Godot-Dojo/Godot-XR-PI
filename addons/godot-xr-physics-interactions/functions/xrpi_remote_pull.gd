@@ -7,7 +7,6 @@ var animating = false
 var target_x_rotation : float
 
 var target : RigidBody3D
-var timer_target : RigidBody3D
 
 var pull_path = Path3D.new()
 
@@ -48,6 +47,8 @@ func check_for_grab(input):
 func pull_node(target : RigidBody3D):
 	animating = true
 	target.freeze = true
+	var original_freeze_mode = target.freeze_mode
+	target.freeze_mode = RigidBody3D.FREEZE_MODE_STATIC
 	pull_path.global_position = global_position
 	pull_curve = Curve3D.new()
 	var point = target.global_position - pull_path.global_position
@@ -57,19 +58,18 @@ func pull_node(target : RigidBody3D):
 	pull_path.curve = pull_curve
 	pull_transform.remote_path = target.get_path()
 	pull_target.progress_ratio = 0
-	
-	var animate_time = 0.45
-	var distance = abs(point.x) + abs(point.y) + abs(point.z)
-	animate_time = animate_time * distance
+
 	var tween = get_tree().create_tween()
-	
+
 	tween.tween_property(pull_target, "progress_ratio", 1, 0.45).set_trans(Tween.TRANS_QUAD)
-	tween.parallel().tween_property(pull_target, "freeze", false, 0.45)
+	tween.tween_property(target, "freeze", false, 0.001)
 	await tween.finished
+	target.freeze_mode = original_freeze_mode
 	pull_transform.remote_path = ""
-	
+
 	animating = false
-	
+
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
