@@ -55,10 +55,47 @@ func is_xr_class(name : String) -> bool:
 # Called when the node enters the scene tree. This constructs the physics-bone
 # nodes and performs initial positioning.
 func _ready():
-	# Skip if in the editor
+	
 	if Engine.is_editor_hint():
-		return
+		var physics_hand := $"../../../.."
+		_bone_shape = CapsuleShape3D.new()
+		_bone_shape.margin = physics_hand.margin
+		_on_hand_scale_changed(XRServer.world_scale)
 
+		# Construct the physics-bone collision shape
+		var bone_collision := CollisionShape3D.new()
+		bone_collision.set_name("BoneCollision")
+		bone_collision.shape = _bone_shape
+		#bone_collision.transform.basis = Basis(Vector3.RIGHT, PI/2)
+		add_child(bone_collision)
+
+		# Construct the physics-bone body
+		_physics_bone = CharacterBody3D.new()
+		_physics_bone.set_name("BoneBody")
+		_physics_bone.set_as_top_level(true)
+		_physics_bone.collision_layer = physics_hand.collision_layer | collision_layer
+		_physics_bone.collision_mask = 0
+		_physics_bone.add_child(bone_collision)
+
+		# Set the optional bone group for all bones in the hand
+		if not physics_hand.bone_group.is_empty():
+			_physics_bone.add_to_group(physics_hand.bone_group)
+
+		# Set the optional bone group for this one bone
+		if not bone_group.is_empty():
+			_physics_bone.add_to_group(bone_group)
+
+		# Construct the bone middle spatial
+		_skeletal_bone = Node3D.new()
+		_skeletal_bone.transform.origin = Vector3.UP * length / 2
+
+		# Add the physics-bone body to this hand bone
+		add_child(_physics_bone)
+		add_child(_skeletal_bone)
+		
+		_teleport_bone()
+		
+		
 	# Connect the 'hand_scale_changed' signal
 	var physics_hand := XRToolsHand.find_instance(self) as XRToolsPhysicsHand
 	if physics_hand:
@@ -74,6 +111,7 @@ func _ready():
 	bone_collision.set_name("BoneCollision")
 	bone_collision.shape = _bone_shape
 	#bone_collision.transform.basis = Basis(Vector3.RIGHT, PI/2)
+	add_child(bone_collision)
 
 	# Construct the physics-bone body
 	_physics_bone = CharacterBody3D.new()

@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Godot XR Physics Interactions"
-config/features=PackedStringArray("4.2", "Mobile")
+config/features=PackedStringArray("4.3")
 config/icon="res://icon.svg"
 
 [rendering]
