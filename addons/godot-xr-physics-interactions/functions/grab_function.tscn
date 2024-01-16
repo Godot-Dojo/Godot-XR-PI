@@ -13,13 +13,12 @@ size = Vector3(0.01, 0.01, 0.01)
 render_priority = 0
 shader = ExtResource("2_o754m")
 
-[node name="GrabFunction" type="StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 0.999991, 0.00413642, 0, -0.00413642, 0.999991, 0.0143744, -0.0539311, 0.113181)
-collision_layer = 131072
-collision_mask = 7
+[node name="AnimatableBody3D" type="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 4.65661e-10, 0, -4.65661e-10, 1, 0, 0, 0)
 script = ExtResource("1_bfxh6")
 
 [node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.999991, 0.00413642, 0, -0.00413642, 0.999991, 0.0143744, -0.0539311, 0.113181)
 collision_layer = 131072
 collision_mask = 4
 
@@ -27,12 +26,11 @@ collision_mask = 4
 shape = SubResource("SphereShape3D_f1w41")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00122476, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 0.999991, 0.00413642, 0, -0.00413642, 0.999991, 0.0131496, -0.0539311, 0.113181)
 mesh = SubResource("BoxMesh_2l1hh")
+skeleton = NodePath("")
 surface_material_override/0 = SubResource("ShaderMaterial_28sid")
 
 [node name="Generic6DOFJoint3D" type="Generic6DOFJoint3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.999991, 0.00413642, 0, -0.00413642, 0.999991, 0.0143744, -0.0539311, 0.113181)
 node_a = NodePath("..")
-
-[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
-[connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]

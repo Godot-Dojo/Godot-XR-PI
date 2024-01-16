@@ -1,4 +1,4 @@
-extends StaticBody3D
+extends AnimatableBody3D
 class_name XRPIGrabFunction
 
 @onready var joint = $Generic6DOFJoint3D
